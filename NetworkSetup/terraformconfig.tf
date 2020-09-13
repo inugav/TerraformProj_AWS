@@ -5,18 +5,17 @@ provider "aws" {
 #  access_key = var.aws_access_key
 #  secret_key = var.aws_secret_key
   region     = var.region
-  shared_credentials_file = "..\\.aws\\credentials"
-  profile = "awsconnect"
+  #shared_credentials_file = "..\\.aws\\credentials"
+  #profile = "awsconnect"
 }
 terraform {
   backend "s3" {
     bucket = "myiacprojadmin"
     key    = "terraformstate/NetworkSetup.tfstate"
     region = "ap-south-1" #Variables are not allowed here
-    #dynamodb_table = "terraform-up-and-running-locks"
     encrypt        = true
-    shared_credentials_file = "..\\.aws\\credentials"
-    profile = "awsconnect"
+    #shared_credentials_file = "..\\.aws\\credentials"
+    #profile = "awsconnect"
   }
 }
 

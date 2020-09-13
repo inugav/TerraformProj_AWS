@@ -1,27 +1,6 @@
 # This is the primary code that will call AWS for creating the required resources
 
 
-##################################################################
-# Basic Validations before starting 
-##################################################################
-# Ensure Environment is DEV / UAT / PRD only
-resource "null_resource" "env_check" {
-  count= contains(var.env_list,var.env_type)==true ? 0:1
-  #"ERROR: The env_type value can only be: DEV, QA or PRD " = true
-  provisioner "local-exec" {
-    command="echo 'ERROR: The env_type value can only be: DEV, QA or PRD' ; exit 1"
-  }
-}
-
-#Ensure az_count is between 1 - 4
-resource "null_resource" "az_count_check" {
-  count=contains(range(1,4),var.az_count)== true ? 0:1
-  #"ERROR: The supported az_count is only between 1-4 " = true
-  provisioner "local-exec" {
-    command="echo 'ERROR: The supported az_count is only between 1-4 ' ; exit 1"
-  }
-}
-
 
 ##################################################################
 # Gather data from AWS 
@@ -46,23 +25,23 @@ resource "aws_internet_gateway" "igw" {
 resource "aws_subnet" "subnets_private" {  
   count      = var.az_count  
   vpc_id     = aws_vpc.vpc.id
-  cidr_block = var.cidr_env[var.env_type][count.index]
-  #cidr_block = cidrsubnet (var.vpc_cidr,4, count.index * var.cidr_env_incr[var.env_type])
-  #cidr_block = cidrsubnet (var.cidr_env[var.env_type],2,count.index)
+  cidr_block = var.cidr_env[terraform.workspace][count.index]
+  #cidr_block = cidrsubnet (var.vpc_cidr,4, count.index * var.cidr_env_incr[terraform.workspace])
+  #cidr_block = cidrsubnet (var.cidr_env[terraform.workspace],2,count.index)
   map_public_ip_on_launch = false
   availability_zone = data.aws_availability_zones.available.names[count.index]
-  tags = merge(local.common_tags,{ Name = "${var.env_type}-private-AZ${count.index + 1}-subnet" })
+  tags = merge(local.common_tags,{ Name = "${terraform.workspace}-private-AZ${count.index + 1}-subnet" })
 }
 resource "aws_subnet" "subnets_public" { 
   count      = var.az_count 
   vpc_id     = aws_vpc.vpc.id
 
-  cidr_block = var.cidr_env[var.env_type][length(var.cidr_env[var.env_type]) - (count.index + 1) ]
-  #cidr_block = cidrsubnet (var.vpc_cidr,4, (count.index + var.az_count) * var.cidr_env_incr[var.env_type])
-  #cidr_block = cidrsubnet (var.cidr_env[var.env_type],2,"${count.index + var.az_count}")
+  cidr_block = var.cidr_env[terraform.workspace][length(var.cidr_env[terraform.workspace]) - (count.index + 1) ]
+  #cidr_block = cidrsubnet (var.vpc_cidr,4, (count.index + var.az_count) * var.cidr_env_incr[terraform.workspace])
+  #cidr_block = cidrsubnet (var.cidr_env[terraform.workspace],2,"${count.index + var.az_count}")
   map_public_ip_on_launch = true
   availability_zone = data.aws_availability_zones.available.names[count.index]
-  tags = merge(local.common_tags,{ Name = "${var.env_type}-public-AZ${count.index + 1}-subnet" })
+  tags = merge(local.common_tags,{ Name = "${terraform.workspace}-public-AZ${count.index + 1}-subnet" })
 }
 
 resource "aws_route_table" "pbl_rtb" {

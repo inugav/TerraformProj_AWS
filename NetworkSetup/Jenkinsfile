@@ -1,0 +1,83 @@
+def planpfx = 'Networkstp'
+def planname
+
+pipeline {
+    agent any
+    tools {
+        "org.jenkinsci.plugins.terraform.TerraformInstallation" "terraform"
+    }
+    parameters {
+             choice(name: 'WORKSPACE',choices: ['DEV', 'UAT', 'PRD'] defaultValue: 'DEV', description:'workspace environment')
+    }
+
+    environment {
+        TF_HOME = tool('terraform')
+        TF_INPUT = "0"
+        TF_IN_AUTOMATION = "TRUE"
+        TF_LOG = "WARN"
+        AWS_ACCESS_KEY_ID = credentials('aws_access_key')
+        AWS_SECRET_ACCESS_KEY = credentials('aws_secret_access_key')
+        PATH = "$TF_HOME:$PATH"
+    }
+
+    stages {
+        
+        stage('NetworkInit'){
+            steps {
+                dir('NetworkSetup/'){
+                    bat 'terraform --version'
+                    bat "terraform init"
+                }
+            }
+        }
+        stage('NetworkValidate'){
+            steps {
+                dir('NetworkSetup/'){
+                    try {
+                        bat 'terraform validate'
+                    }
+                    catch {
+                        echo "Validation Errors "
+                        currentBuild.result = 'UNSTABLE'
+                    }
+                }
+            }
+        }
+        stage('NetworkPlan'){
+            steps {
+                dir('NetworkSetup/'){
+                    script {
+                        env.planname = ${env.planpfx} + "_"+ ${params.WORKSPACE}+".tfplan"
+                        try {
+                            bat "terraform workspace select ${params.WORKSPACE}"
+                        } catch (err) {
+                             bat "terraform workspace new ${params.WORKSPACE}"
+                        }
+                        bat "terraform plan -out ${env.planname} ;echo \$? > status"
+                        stash name: "terraform-networking-plan", includes: "${env.planname}"
+                    }
+                }
+            }
+        }
+        stage('NetworkApply'){
+            steps {
+                script{
+                    def apply = false
+                    try {
+                        input message: 'confirm apply', ok: 'Apply Config'
+                        apply = true
+                    } catch (err) {
+                        apply = false
+                        echo "Exiting without apply"
+                    }
+                    if(apply){
+                        dir('NetworkSetup/'){
+                            unstash "terraform-networking-plan"
+                            sh 'terraform apply ${env.planname}'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
