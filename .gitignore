@@ -1,1 +1,11 @@
+.aws
 AppInfraSetup/secrets.auto.tfvars
+AppInfraSetup/.terraform/*
+AppInfraSetup/archive.notused
+AppInfraSetup/terraform.tfstate.d/*
+NetworkSetup/.terraform/*
+NetworkSetup/secrets.auto.tfvars
+NetworkSetup/archive.notused
+NetworkSetup/terraform.tfstate.d/*
+AppInfraSetup/AppInfrastp_DEV.tfplan
+NetworkSetup/Networkstp_DEV.tfplan

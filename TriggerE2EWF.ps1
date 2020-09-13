@@ -1,8 +1,10 @@
 param ( $env_type = 'DEV')
 
+$AppInfraplanprefix = 'AppInfrastp_'
+$Networkplanprefix = 'Networkstp_'
 $curdir = pwd
 $curdate = get-date -Format "dd_mm_yyyy"
-$outfile = $curdir + $env_type + $curdate + ".jsonssh"
+$outfile = $curdir + $env_type + $curdate + ".json"
 Write-host 'Current Working Directory - ' $curdir
 
 #Initiate Network setup
@@ -18,7 +20,7 @@ catch
 {
     terraform workspace new $env_type
 }
-$tfplanname = 'Netwrkstp_' + $env_type + '.tfplan'
+$tfplanname = $Networkplanprefix + $env_type + '.tfplan'
 terraform init 
 terraform plan -out $tfplanname
 terraform apply $tfplanname
@@ -38,7 +40,7 @@ catch
 {
     terraform workspace new $env_type
 }
-$tfplanname = 'AppInfrastp_' + $env_type + '.tfplan'
+$tfplanname = $AppInfraplanprefix + $env_type + '.tfplan'
 terraform init 
 terraform plan -out $tfplanname
 terraform apply $tfplanname
