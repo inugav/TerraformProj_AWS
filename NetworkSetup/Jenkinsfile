@@ -83,7 +83,7 @@ pipeline {
                     if(apply){
                         dir('NetworkSetup/'){
                             unstash "terraform-networking-plan"
-                            bat 'terraform apply ${planname}'
+                            bat "terraform apply ${planname}"
                         }
                     }
                 }
