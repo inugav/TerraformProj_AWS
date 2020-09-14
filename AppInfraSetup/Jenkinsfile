@@ -25,9 +25,9 @@ pipeline {
                 dir('AppInfraSetup/') {
                     script {
                         try {
-                            bat "terraform workspace select ${params.WORKSPACE}"
+                            bat "terraform workspace new ${params.WORKSPACE}"
                         } catch (err) {
-                             bat "terraform workspace new ${params.WORKSPACE}"
+                             bat "terraform workspace select ${params.WORKSPACE}"
                         }
                         try {
                             bat 'terraform --version'
