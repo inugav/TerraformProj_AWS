@@ -14,7 +14,7 @@ pipeline {
         TF_HOME = tool('terraform')
         TF_INPUT = "0"
         TF_IN_AUTOMATION = "TRUE"
-        TF_LOG = "WARN"
+        TF_LOG = ""
         AWS_ACCESS_KEY_ID = credentials('aws_access_key')
         AWS_SECRET_ACCESS_KEY = credentials('aws_secret_access_key')
         PATH = "$TF_HOME:$PATH"
