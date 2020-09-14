@@ -7,7 +7,7 @@ pipeline {
         "org.jenkinsci.plugins.terraform.TerraformInstallation" "terraform"
     }
     parameters {
-             choice(name: 'WORKSPACE', choices: ['DEV', 'UAT', 'PRD'] , defaultValue: 'DEV', description:'workspace environment')
+             choice(name: 'WORKSPACE', choices: ['DEV', 'UAT', 'PRD'] , description:'workspace environment')
     }
 
     environment {
@@ -21,17 +21,18 @@ pipeline {
     }
 
     stages {
-        
         stage('NetworkInit'){
             steps {
-                dir('NetworkSetup/'){
-                    try {
-                        bat 'terraform --version'
-                        bat "terraform init"            
-                    }
-                    catch (err) {
-                        echo "Initialization Errors "
-                        currentBuild.result = 'UNSTABLE'
+                dir('NetworkSetup/') {
+                    script {
+                        try {
+                            bat 'terraform --version'
+                            bat "terraform init"            
+                        }
+                        catch (err) {
+                            echo "Initialization Errors "
+                            currentBuild.result = 'UNSTABLE'
+                        }
                     }
                 }
             }
@@ -39,12 +40,14 @@ pipeline {
         stage('NetworkValidate'){
             steps {
                 dir('NetworkSetup/'){
-                    try {
-                        bat 'terraform validate'
-                    }
-                    catch (err) {
-                        echo "Validation Errors "
-                        currentBuild.result = 'UNSTABLE'
+                    script {
+                        try {
+                            bat 'terraform validate'
+                        }
+                        catch (err) {
+                            echo "Validation Errors "
+                            currentBuild.result = 'UNSTABLE'
+                        }
                     }
                 }
             }
