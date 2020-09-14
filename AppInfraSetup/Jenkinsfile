@@ -1,7 +1,8 @@
 def planpfx = 'AppInfrastp'
-def pla'nname
+def planname
 def key_name = credentials('key_name')
 def private_key_path = credentials('32c3e09e-0fa5-4263-bd77-0026b9aed9b5') 
+
 pipeline {
     agent any
     tools {
