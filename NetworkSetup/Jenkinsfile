@@ -63,7 +63,7 @@ pipeline {
                         } catch (err) {
                              bat "terraform workspace new ${params.WORKSPACE}"
                         }
-                        bat "terraform plan -out ${planname} > status"
+                        bat "terraform plan -out ${planname}"
                         stash name: "terraform-networking-plan", includes: "${planname}"
                     }
                 }
@@ -83,7 +83,7 @@ pipeline {
                     if(apply){
                         dir('NetworkSetup/'){
                             unstash "terraform-networking-plan"
-                            bat 'terraform apply ${env.planname}'
+                            bat 'terraform apply ${planname}'
                         }
                     }
                 }
