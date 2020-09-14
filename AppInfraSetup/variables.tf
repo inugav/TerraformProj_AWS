@@ -1,9 +1,9 @@
 # This file contains the variable declarations to be used in resources.tf & outout.tf
 #Secrets
-variable "aws_access_key" {}
-variable "aws_secret_key" {}
-variable "private_key_path" {}
-variable "key_name" {}
+#variable "aws_access_key" {}
+#variable "aws_secret_key" {}
+#variable "private_key_path" {}
+#variable "key_name" {}
 
 # AWS Global
 variable "region" {}
