@@ -47,6 +47,7 @@ pipeline {
                         catch (err) {
                             echo "Validation Errors "
                             currentBuild.result = 'UNSTABLE'
+                            return
                         }
                     }
                 }
@@ -56,7 +57,7 @@ pipeline {
             steps {
                 dir('NetworkSetup/'){
                     script {
-                        planname = sh( script:"${planpfx} + \"_\"+ ${params.WORKSPACE}+\".tfplan\",returnStdout: true).trim()
+                        planname = ${planpfx} + "_"+ ${params.WORKSPACE}+ ".tfplan"
                         try {
                             bat "terraform workspace select ${params.WORKSPACE}"
                         } catch (err) {
