@@ -13,12 +13,6 @@ cidr_env = {  # 8 Subnets per environment
   PRD = ["10.10.128.0/21","10.10.136.0/21","10.10.144.0/21","10.10.152.0/21","10.10.160.0/21","10.10.168.0/21","10.10.176.0/21", "10.10.184.0/21"]
 }
 
-#cidr_env_inct = { 
-#  DEV = 1
-#  UAT = 4
-#  PRD = 8
-#}
-
 #Environment 
 env_type="DEV"   #Valid types are DEV, UAT, PRD
 env_list = ["DEV","UAT","PRD"]

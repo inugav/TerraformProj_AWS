@@ -4,8 +4,6 @@
 # OUTPUT
 ##################################################################################
 
-
-
 output "azs_configured_on" {
   value = aws_subnet.subnets_public[*].availability_zone
 }

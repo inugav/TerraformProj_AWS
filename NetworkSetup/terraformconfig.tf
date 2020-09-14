@@ -2,11 +2,7 @@
 # Establish connection to AWS
 ##################################################################
 provider "aws" {
-#  access_key = var.aws_access_key
-#  secret_key = var.aws_secret_key
   region     = var.region
-  #shared_credentials_file = "..\\.aws\\credentials"
-  #profile = "awsconnect"
 }
 terraform {
   backend "s3" {
@@ -14,8 +10,6 @@ terraform {
     key    = "terraformstate/NetworkSetup.tfstate"
     region = "ap-south-1" #Variables are not allowed here
     encrypt        = true
-    #shared_credentials_file = "..\\.aws\\credentials"
-    #profile = "awsconnect"
   }
 }
 
@@ -25,7 +19,7 @@ terraform {
   tags   = { Project = "${var.project_tag}" }
 }*/
 
-/*resource "aws_dynamodb_table" "terraform_locks" {
+resource "aws_dynamodb_table" "terraform_locks" {
   name         = "terraform-up-and-running-locks"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "LockID"
@@ -33,4 +27,4 @@ terraform {
     name = "LockID"
     type = "S"
   }
-}*/
+}
