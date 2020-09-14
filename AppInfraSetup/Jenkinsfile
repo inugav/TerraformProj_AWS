@@ -62,8 +62,9 @@ pipeline {
                         } catch (err) {
                              bat "terraform workspace new ${params.WORKSPACE}"
                         }
-                        withCredentials([string(credentialsId: 'key_name', variable: 'KEYNAME'),file(credentialsId: 'AWS_SSH_KEY_FILE', variable: 'SFILE')]),
-                        bat "terraform plan -var key_name=${KEYNAME} -var private_key_path=${SFILE} -out ${planname} " 
+                        withCredentials([string(credentialsId: 'key_name', variable: 'KEYNAME'),file(credentialsId: 'AWS_SSH_KEY_FILE', variable: 'SFILE')]){
+                            bat "terraform plan -var key_name=${KEYNAME} -var private_key_path=${SFILE} -out ${planname} " 
+                        }
                         stash name: "terraform-appinfra-plan", includes: "${planname}"
                     }
                 }
