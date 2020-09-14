@@ -2,14 +2,14 @@
 # Establish connection to AWS
 ##################################################################
 provider "aws" {
-  access_key = var.aws_access_key
-  secret_key = var.aws_secret_key
+  #access_key = var.aws_access_key
+  #secret_key = var.aws_secret_key
   region     = var.region
 }
 terraform {
   backend "s3" {
     bucket         = "myiacprojadmin"
-    key            = "terraformstate/AppInfrastp_DEV.tfstate"
+    key            = "terraformstate/AppInfrastp.tfstate"
     region         = "ap-south-1" #Variables are not allowed here
     dynamodb_table = "terraform-up-and-running-locks"
     encrypt        = true
