@@ -57,7 +57,7 @@ pipeline {
             steps {
                 dir('NetworkSetup/'){
                     script {
-                        planname = ${planpfx} + "_"+ ${params.WORKSPACE}+ ".tfplan"
+                        planname = "${planpfx}" + "_"+ "${params.WORKSPACE}"+ ".tfplan"
                         try {
                             bat "terraform workspace select ${params.WORKSPACE}"
                         } catch (err) {
