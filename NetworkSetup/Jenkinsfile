@@ -25,8 +25,14 @@ pipeline {
         stage('NetworkInit'){
             steps {
                 dir('NetworkSetup/'){
-                    bat 'terraform --version'
-                    bat "terraform init"
+                    try {
+                        bat 'terraform --version'
+                        bat "terraform init"            
+                    }
+                    catch (err) {
+                        echo "Initialization Errors "
+                        currentBuild.result = 'UNSTABLE'
+                    }
                 }
             }
         }
@@ -36,7 +42,7 @@ pipeline {
                     try {
                         bat 'terraform validate'
                     }
-                    catch {
+                    catch (err) {
                         echo "Validation Errors "
                         currentBuild.result = 'UNSTABLE'
                     }
