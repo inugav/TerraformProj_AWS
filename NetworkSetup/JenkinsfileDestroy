@@ -1,0 +1,93 @@
+def planpfx = 'NetworkDestroy'
+def planname
+
+pipeline {
+    agent any
+    tools {
+        "org.jenkinsci.plugins.terraform.TerraformInstallation" "terraform"
+    }
+    parameters {
+             choice(name: 'WORKSPACE', choices: ['DEV', 'UAT', 'PRD'] , description:'workspace environment')
+    }
+
+    environment {
+        TF_HOME = tool('terraform')
+        TF_INPUT = "0"
+        TF_IN_AUTOMATION = "TRUE"
+        TF_LOG = ""
+        AWS_ACCESS_KEY_ID = credentials('aws_access_key')
+        AWS_SECRET_ACCESS_KEY = credentials('aws_secret_access_key')
+        PATH = "$TF_HOME:$PATH"
+    }
+
+    stages {
+        stage('NetworkInit'){
+            steps {
+                dir('NetworkSetup/') {
+                    script {
+                        try {
+                            bat 'terraform --version'
+                            bat "terraform init"            
+                        }
+                        catch (err) {
+                            echo "Initialization Errors "
+                            currentBuild.result = 'UNSTABLE'
+                        }
+                    }
+                }
+            }
+        }
+        stage('NetworkValidate'){
+            steps {
+                dir('NetworkSetup/'){
+                    script {
+                        try {
+                            bat 'terraform validate'
+                        }
+                        catch (err) {
+                            echo "Validation Errors "
+                            currentBuild.result = 'UNSTABLE'
+                            return
+                        }
+                    }
+                }
+            }
+        }
+        stage('NetworkPlan'){
+            steps {
+                dir('NetworkSetup/'){
+                    script {
+                        planname = "${planpfx}" + "_"+ "${params.WORKSPACE}"+ ".tfplan"
+                        try {
+                            bat "terraform workspace select ${params.WORKSPACE}"
+                        } catch (err) {
+                             bat "terraform workspace new ${params.WORKSPACE}"
+                        }
+                        bat "terraform plan -destroy -out ${planname}"
+                        stash name: "terraform-networking-plan", includes: "${planname}"
+                    }
+                }
+            }
+        }
+        stage('NetworkApply'){
+            steps {
+                script{
+                    def apply = false
+                    try {
+                        input message: 'confirm apply', ok: 'Apply Config'
+                        apply = true
+                    } catch (err) {
+                        apply = false
+                        echo "Exiting without apply"
+                    }
+                    if(apply){
+                        dir('NetworkSetup/'){
+                            unstash "terraform-networking-plan"
+                            bat "terraform apply ${planname}"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
