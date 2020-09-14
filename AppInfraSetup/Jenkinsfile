@@ -1,7 +1,7 @@
 def planpfx = 'AppInfrastp'
 def planname
-def key_name = credentials('key_name')
-def private_key_path = credentials('32c3e09e-0fa5-4263-bd77-0026b9aed9b5') 
+def strkey_name = credentials('key_name')
+def strpvt_key_path = credentials('32c3e09e-0fa5-4263-bd77-0026b9aed9b5') 
 
 pipeline {
     agent any
@@ -65,7 +65,7 @@ pipeline {
                         } catch (err) {
                              bat "terraform workspace new ${params.WORKSPACE}"
                         }
-                        bat "terraform plan -out ${planname} -var key_name=${key_name} -var private_key_path=${private_key_path}" 
+                        bat "terraform plan -out ${planname} -var key_name=${strkey_name} -var private_key_path=${strpvt_key_path}" 
                         stash name: "terraform-appinfra-plan", includes: "${planname}"
                     }
                 }
