@@ -56,14 +56,14 @@ pipeline {
             steps {
                 dir('NetworkSetup/'){
                     script {
-                        env.planname = ${env.planpfx} + "_"+ ${params.WORKSPACE}+".tfplan"
+                        planname = sh( script:"${planpfx} + \"_\"+ ${params.WORKSPACE}+\".tfplan\",returnStdout: true).trim()
                         try {
                             bat "terraform workspace select ${params.WORKSPACE}"
                         } catch (err) {
                              bat "terraform workspace new ${params.WORKSPACE}"
                         }
-                        bat "terraform plan -out ${env.planname} > status"
-                        stash name: "terraform-networking-plan", includes: "${env.planname}"
+                        bat "terraform plan -out ${planname} > status"
+                        stash name: "terraform-networking-plan", includes: "${planname}"
                     }
                 }
             }
