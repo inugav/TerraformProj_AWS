@@ -7,7 +7,7 @@ pipeline {
         "org.jenkinsci.plugins.terraform.TerraformInstallation" "terraform"
     }
     parameters {
-             choice(name: 'WORKSPACE',choices: ['DEV', 'UAT', 'PRD'] defaultValue: 'DEV', description:'workspace environment')
+             choice(name: 'WORKSPACE', choices: ['DEV', 'UAT', 'PRD'] , defaultValue: 'DEV', description:'workspace environment')
     }
 
     environment {
