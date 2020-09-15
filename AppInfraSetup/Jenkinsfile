@@ -104,7 +104,7 @@ pipeline {
                     def apply = false
                     try {
                         echo "Plan for ${params.WORKTYPE} "
-                        input message: "confirm apply - Plan for ${params.WORKTYPE}" , ok: 'Apply Config'
+                        input message: "confirm apply - Plan for ${params.WORKTYPE}" , ok: 'Apply Config - Plan for ${params.WORKTYPE}'
                         apply = true
                     } catch (err) {
                         apply = false
