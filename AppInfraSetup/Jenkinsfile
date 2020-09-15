@@ -6,10 +6,9 @@ pipeline {
         "org.jenkinsci.plugins.terraform.TerraformInstallation" "terraform"
     }
     parameters {
-            choice(name: 'WORKSPACE', choices: ['DEV', 'UAT', 'PRD'] , description:'workspace environment')
-            choice(name: 'WORKTYPE', choices: ['BUILD', 'DESTROY']), descrtiption: 'Selection action to perform')
+            choice(name: 'WORKSPACE', choices: ['DEV', 'UAT', 'PRD'] , description: 'workspace environment')
+            choice(name: 'WORKTYPE', choices: ['BUILD', 'DESTROY'], descrtiption: 'Selection action to perform')
     }
-
     environment {
         TF_HOME = tool('terraform')
         TF_INPUT = "0"
@@ -59,10 +58,8 @@ pipeline {
             }
         }
         stage('AppInfraPlan-Build'){
+            when { equals expected:'BUILD', actual:"${params.WORKTYPE}"}
             steps {
-                when { 
-                    equals expected: 'BUILD', action: "${params.WORKTYPE}"
-                }
                 dir('AppInfraSetup/'){
                     script {
                         planname = "${planpfx}" + "_"+ "${params.WORKSPACE}"+ ".tfplan"
@@ -71,20 +68,19 @@ pipeline {
                         } catch (err) {
                              bat "terraform workspace new ${params.WORKSPACE}"
                         }
-                            withCredentials([string(credentialsId: 'key_name', variable: 'KEYNAME'),file(credentialsId: 'AWS_SSH_KEY_FILE', variable: 'SFILE')]){
+                        withCredentials([string(credentialsId: 'key_name', variable: 'KEYNAME'),file(credentialsId: 'AWS_SSH_KEY_FILE', variable: 'SFILE')])
+                        {
                             bat "terraform plan -var key_name=${KEYNAME} -var private_key_path=${SFILE} -out ${planname} " 
-                            }
-                            stash name: "terraform-appinfra-plan", includes: "${planname}"
                         }
+                        stash name: "terraform-appinfra-plan", includes: "${planname}"
                     }
                 }
             }
         }
-        stage('AppInfraPlan-DESTROY'){
+        
+        stage('AppInfraPlan-Destroy'){
+            when { equals expected: 'DESTROY', actual: "${params.WORKTYPE}" }
             steps {
-                when { 
-                    equals expected: 'DESTROY', action: "${params.WORKTYPE}"
-                }
                 dir('AppInfraSetup/'){
                     script {
                         planname = "${planpfx}" + "_"+ "${params.WORKSPACE}"+ ".tfplan"
@@ -93,11 +89,10 @@ pipeline {
                         } catch (err) {
                              bat "terraform workspace new ${params.WORKSPACE}"
                         }
-                            withCredentials([string(credentialsId: 'key_name', variable: 'KEYNAME'),file(credentialsId: 'AWS_SSH_KEY_FILE', variable: 'SFILE')]){
-                            bat "terraform plan -var key_name=${KEYNAME} -var private_key_path=${SFILE} -destroy -out ${planname} " 
-                            }
-                            stash name: "terraform-appinfra-plan", includes: "${planname}"
+                        withCredentials([string(credentialsId: 'key_name', variable: 'KEYNAME'),file(credentialsId: 'AWS_SSH_KEY_FILE', variable: 'SFILE')]){
+                        bat "terraform plan -var key_name=${KEYNAME} -var private_key_path=${SFILE} -destroy -out ${planname} " 
                         }
+                        stash name: "terraform-appinfra-plan", includes: "${planname}"
                     }
                 }
             }
@@ -108,7 +103,7 @@ pipeline {
                 script{
                     def apply = false
                     try {
-                        input message: 'confirm apply', ok: 'Apply Config'
+                        input message: 'confirm apply - ${params.WORKTYPE} plan', ok: 'Apply Config'
                         apply = true
                     } catch (err) {
                         apply = false
