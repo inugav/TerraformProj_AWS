@@ -103,7 +103,8 @@ pipeline {
                 script{
                     def apply = false
                     try {
-                        input message: "confirm apply - ${params.WORKTYPE} plan", ok: 'Apply Config'
+                        echo "Plan for ${params.WORKTYPE} "
+                        input message: "confirm apply" , ok: 'Apply Config'
                         apply = true
                     } catch (err) {
                         apply = false
