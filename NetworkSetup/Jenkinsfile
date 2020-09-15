@@ -7,7 +7,8 @@ pipeline {
         "org.jenkinsci.plugins.terraform.TerraformInstallation" "terraform"
     }
     parameters {
-             choice(name: 'WORKSPACE', choices: ['DEV', 'UAT', 'PRD'] , description:'workspace environment')
+            choice(name: 'WORKSPACE', choices: ['DEV', 'UAT', 'PRD'] , description:'workspace environment')
+            choice(name: 'WORKTYPE', choices: ['BUILD', 'DESTROY'], description: 'Selection action to perform')
     }
 
     environment {
@@ -53,7 +54,8 @@ pipeline {
                 }
             }
         }
-        stage('NetworkPlan'){
+        stage('NetworkPlan-BUILD'){
+            when { equals expected:'BUILD', actual:"${params.WORKTYPE}"}
             steps {
                 dir('NetworkSetup/'){
                     script {
@@ -69,12 +71,30 @@ pipeline {
                 }
             }
         }
+        stage('NetworkPlan-Destroy'){
+            when { equals expected:'DESTROY', actual:"${params.WORKTYPE}"}
+            steps {
+                dir('NetworkSetup/'){
+                    script {
+                        planname = "${planpfx}" + "_"+ "${params.WORKSPACE}"+ ".tfplan"
+                        try {
+                            bat "terraform workspace select ${params.WORKSPACE}"
+                        } catch (err) {
+                             bat "terraform workspace new ${params.WORKSPACE}"
+                        }
+                        bat "terraform plan -destroy -out ${planname}"
+                        stash name: "terraform-networking-plan", includes: "${planname}"
+                    }
+                }
+            }
+        }
         stage('NetworkApply'){
             steps {
                 script{
                     def apply = false
                     try {
-                        input message: 'confirm apply', ok: 'Apply Config'
+                        echo "Plan for ${params.WORKTYPE} "
+                        input message: "confirm apply - Plan for ${params.WORKTYPE}" , ok: 'Apply Config - Plan for ${params.WORKTYPE}'                        
                         apply = true
                     } catch (err) {
                         apply = false
