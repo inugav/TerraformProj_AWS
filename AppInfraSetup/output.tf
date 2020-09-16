@@ -22,14 +22,14 @@ output "webserver_asg_info" {
     name = aws_autoscaling_group.websrvr_asg.name
   }
 }
-output "webinstances" {
-  value = {
-    ids           = data.aws_instances.web_instances.ids,
-    private_ips   = data.aws_instances.web_instances.private_ips
-    public_ips    = data.aws_instances.web_instances.public_ips
-    instance_tags = data.aws_instances.web_instances.instance_tags
-  }
-}
+#output "webinstances" {
+#  value = {
+#    ids           = data.aws_instances.web_instances.ids,
+##    private_ips   = data.aws_instances.web_instances.private_ips
+#   public_ips    = data.aws_instances.web_instances.public_ips
+#    instance_tags = data.aws_instances.web_instances.instance_tags
+#  }
+#}
 output "natinstances" {
   value = {
     ids           = aws_instance.nat_instances[*].id,
