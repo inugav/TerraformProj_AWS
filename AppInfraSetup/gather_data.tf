@@ -62,11 +62,11 @@ data "aws_route53_zone" "mydnszone" {
 ##################################################################
 # Gather data from AWS - Post Creation of Instances
 ##################################################################
-#data "aws_instances" "web_instances" {
-#  instance_tags = local.common_tags
-#  filter {
-#    name   = "instance.group-name"
-#    values = [aws_security_group.websrvr_sg.name]
-#  }
-#  depends_on = [aws_autoscaling_group.websrvr_asg]
-#}
+data "aws_instances" "web_instances" {
+  instance_tags = local.common_tags
+  filter {
+    name   = "instance.group-name"
+    values = [aws_security_group.websrvr_sg.name]
+  }
+  depends_on = [aws_autoscaling_group.websrvr_asg]
+}
