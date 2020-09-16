@@ -1,6 +1,6 @@
 ## Web Application - Security Group Inbound & Outbound config
 resource "aws_security_group" "websrvr_sg" {
-  name = "${var.project_tag}-websrvr_${terrafom.workspace}_sg"
+  name = "${var.project_tag}-websrvr_${terraform.workspace}_sg"
   ingress { #Allow HTTP
     from_port   = 80
     to_port     = 80
@@ -28,12 +28,12 @@ resource "aws_security_group" "websrvr_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   vpc_id = data.terraform_remote_state.networking.outputs.vpc_info.id
-  tags   = merge({ Project = "${var.project_tag}" }, { Name = "${var.project_tag}-websrvr_${terrafom.workspace}_sg" })
+  tags   = merge({ Project = "${var.project_tag}" }, { Name = "${var.project_tag}-websrvr_${terraform.workspace}_sg" })
 }
 
 #NAT Instance Security Group
 resource "aws_security_group" "natinst_sg" {
-  name = "${var.project_tag}-natsrvr_${terrafom.workspace}_sg"
+  name = "${var.project_tag}-natsrvr_${terraform.workspace}_sg"
   # SSH access 
   ingress { # Allow from public network
     from_port   = 22
@@ -61,12 +61,12 @@ resource "aws_security_group" "natinst_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   vpc_id = data.terraform_remote_state.networking.outputs.vpc_info.id
-  tags   = merge({ Project = "${var.project_tag}" }, { Name = "${var.project_tag}-natsrvr_${terrafom.workspace}_sg" })
+  tags   = merge({ Project = "${var.project_tag}" }, { Name = "${var.project_tag}-natsrvr_${terraform.workspace}_sg" })
 }
 
 ### Database servers security group
 resource "aws_security_group" "mysql-sg" {
-  name = "${var.project_tag}-dbsrvr_${terrafom.workspace}_sg"
+  name = "${var.project_tag}-dbsrvr_${terraform.workspace}_sg"
 
   # MySQL access from Web & NAT Instance Only
   ingress {
@@ -99,5 +99,5 @@ resource "aws_security_group" "mysql-sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   vpc_id = data.terraform_remote_state.networking.outputs.vpc_info.id
-  tags   = merge({ Project = "${var.project_tag}" }, { Name = "${var.project_tag}-dbsrvr_${terrafom.workspace}_sg" })
+  tags   = merge({ Project = "${var.project_tag}" }, { Name = "${var.project_tag}-dbsrvr_${terraform.workspace}_sg" })
 }
