@@ -3,6 +3,7 @@
 
 - name: Playbook for Web Servers
   hosts: websrvr_DEV
+  become: true
   tasks:
     - name: Take backup of existing index.html
       command: cp /usr/share/nginx/html/index.html /usr/share/nginx/html/index.html.bak
