@@ -13,21 +13,22 @@ pipeline {
         AWS_ACCESS_KEY_ID = credentials('aws_access_key')
         AWS_SECRET_ACCESS_KEY = credentials('aws_secret_access_key')
         ANSIBLE_HOST_KEY_CHECKING = false
-        ANSIBLE_PRIVATE_KEY_FILE = credentials('AWS_SSH_KEY_FILE')
     }
     
     stages {
       
         stage('Generate Inventory File '){
             steps {
-                dir('Ansible_Pipeline/') {
-                    script {
-                        try {
-                            bat  'C:\\Users\\vamsi\\AppData\\Local\\Programs\\Python\\Python38-32\\python.exe .\\QueryAWS_EC2.py'  
-                        }
-                        catch (err) {
-                            echo "Error Generating File"
-                            currentBuild.result = 'UNSTABLE'
+                withCredentials([file(credentialsId: 'AWS_SSH_KEY_FILE', variable: 'ANSIBLE_PRIVATE_KEY_FILE')]) {
+                    dir('Ansible_Pipeline/') {
+                        script {
+                            try {
+                                bat  'C:\\Users\\vamsi\\AppData\\Local\\Programs\\Python\\Python38-32\\python.exe .\\QueryAWS_EC2.py'  
+                            }
+                            catch (err) {
+                                echo "Error Generating File"
+                                currentBuild.result = 'UNSTABLE'
+                            }
                         }
                     }
                 }
@@ -36,6 +37,7 @@ pipeline {
     
         stage('Execute Ansible Playbook'){
             steps {
+                withcre
                 dir('Ansible_Pipeline/'){
                     script {
                             def srvrgrp 
