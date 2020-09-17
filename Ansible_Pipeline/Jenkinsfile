@@ -66,8 +66,6 @@ pipeline {
                 withCredentials([file(credentialsId: 'AWS_SSH_KEY_FILE', variable: 'ANSIBLE_PRIVATE_KEY_FILE')]) {
                     dir('Ansible_Pipeline/'){
                         script {
-                            def srvrgrp 
-                            def playbook
                             srvrgrp = "${params.SERVERTYPE}_${params.WORKSPACE}"
                             playbook = "${params.SERVERTYPE}.yml"
                             echo "Running ansible playbook against ${srvrgrp}"
