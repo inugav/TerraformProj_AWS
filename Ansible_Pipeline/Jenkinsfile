@@ -41,7 +41,7 @@ pipeline {
                     script {
                             def srvrgrp 
                             srvrgrp = "${params.SERVERTYPE}_${params.WORKSPACE}"
-                            echo "${srvrgrp}"
+                            echo "Running ansible playbook against ${srvrgrp}"
                             try {
                                 bat """C:\\Windows\\system32\\wsl.exe ansible \"${srvrgrp}\" -i hostsfile.ini -m ping """
                             }
