@@ -42,7 +42,7 @@ pipeline {
                             srvrgrp = "${params.SERVERTYPE}_${params.WORKSPACE}"
                             echo "Running ansible playbook against ${srvrgrp}"
                             try {
-                                 withCredentials([file(credentialsId: 'AWS_SSH_KEY_FILE', variable: 'ANSIBLE_PRIVATE_KEY_FILE')])
+                                 withCredentials([file(vaultcredentialsId: 'AWS_SSH_KEY_FILE', variable: 'ANSIBLE_PRIVATE_KEY_FILE')])
                                 {
                                     bat """C:\\Windows\\system32\\wsl.exe ansible \"${srvrgrp}\" -i hostsfile.ini -m ping --private-key=\"${ANSIBLE_PRIVATE_KEY_FILE}\" """
                                 }
