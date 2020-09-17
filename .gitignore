@@ -9,3 +9,5 @@ NetworkSetup/archive.notused
 NetworkSetup/terraform.tfstate.d/*
 AppInfraSetup/AppInfrastp_DEV.tfplan
 NetworkSetup/Networkstp_DEV.tfplan
+hostsfile.ini
+hostsfilepvtips.ini

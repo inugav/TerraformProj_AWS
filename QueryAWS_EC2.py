@@ -3,6 +3,7 @@ import json
 strregion = "ap-south-1"
 commonparms = "ansible_user=ec2-user" # ansible_connection=ssh"
 ec2 = boto3.resource(service_name='ec2', region_name=(strregion))
+
 allinsts = []
 srvrgrp = set()
 for ins in ec2.instances.all():
@@ -36,5 +37,4 @@ for sg in srvrgrp:
             i=i+1
 pvtinvfile.close()
 pblinvfile.close()
-
 
