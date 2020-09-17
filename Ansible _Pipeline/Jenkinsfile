@@ -13,8 +13,9 @@ pipeline {
         PYTHON_EXE = 'C:\\Users\\vamsi\\AppData\\Local\\Programs\\Python\\Python38-32\\python.exe'
         WSL_EXE = 'C:\\Windows\\system32\\wsl.exe'
     }
-    def srvrgrp = "${env.SERVERTYPE}_${env.WORKSPACE}"
+    
     stages {
+        def srvrgrp = "${env.SERVERTYPE}_${env.WORKSPACE}"
         stage('Generate Inventory File '){
             steps {
                 dir('Ansible_Pipeline/') {
