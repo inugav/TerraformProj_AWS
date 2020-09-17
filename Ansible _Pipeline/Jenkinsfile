@@ -1,3 +1,6 @@
+def WSL_EXE = 'C:\\Windows\\system32\\wsl.exe'
+def PYTHON_EXE = 'C:\\Users\\vamsi\\AppData\\Local\\Programs\\Python\\Python38-32\\python.exe'
+
 pipeline {
     agent any
 
@@ -10,8 +13,8 @@ pipeline {
         AWS_ACCESS_KEY_ID = credentials('aws_access_key')
         AWS_SECRET_ACCESS_KEY = credentials('aws_secret_access_key')
         ANSIBLE_PRIVATE_KEY_FILE = credentials('AWS_SSH_KEY_FILE')
-        PYTHON_EXE = 'C:\\Users\\vamsi\\AppData\\Local\\Programs\\Python\\Python38-32\\python.exe'
-        WSL_EXE = 'C:\\Windows\\system32\\wsl.exe'
+       
+   
     }
     
     stages {
@@ -20,8 +23,10 @@ pipeline {
             steps {
                 dir('Ansible_Pipeline/') {
                     script {
+                         
+
                         try {
-                            bat  '${env.PYTHON_EXE} .\\QueryAWS_EC2.py'  
+                            bat  '${PYTHON_EXE} .\\QueryAWS_EC2.py'  
                         }
                         catch (err) {
                             echo "Error Generating File"
@@ -37,9 +42,10 @@ pipeline {
                 dir('Ansible_Pipeline/'){
                     script {
                           def srvrgrp 
+                          
                             srvrgrp = "${params.SERVERTYPE}_${params.WORKSPACE}"
                             try {
-                                bat '${env.WSL_EXE} ansible ${srvrgrp} -i hostsfile.ini -m ping '
+                                bat '${WSL_EXE} ansible ${srvrgrp} -i hostsfile.ini -m ping '
                             }
                             catch (err) {
                                 echo "Validation Errors "
