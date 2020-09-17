@@ -19,15 +19,14 @@ pipeline {
       
         stage('Generate Inventory File '){
             steps {
-                   dir('Ansible_Pipeline/') {
-                        script {
-                            try {
-                                bat  'C:\\Users\\vamsi\\AppData\\Local\\Programs\\Python\\Python38-32\\python.exe .\\QueryAWS_EC2.py'  
-                            }
-                            catch (err) {
-                                echo "Error Generating File"
-                                currentBuild.result = 'UNSTABLE'
-                            }
+                dir('Ansible_Pipeline/') {
+                    script {
+                        try {
+                            bat  'C:\\Users\\vamsi\\AppData\\Local\\Programs\\Python\\Python38-32\\python.exe .\\QueryAWS_EC2.py'  
+                        }
+                        catch (err) {
+                            echo "Error Generating File"
+                            currentBuild.result = 'UNSTABLE'
                         }
                     }
                 }
@@ -49,9 +48,11 @@ pipeline {
                                     echo "Validation Errors "
                                     currentBuild.result = 'UNSTABLE'
                                     return
+                                }
                             }
                         }
                     }
+                }
             }
         }
     }
