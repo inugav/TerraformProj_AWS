@@ -46,7 +46,7 @@ pipeline {
                                 bat "@copy ${ANSIBLE_PRIVATE_KEY_FILE} ansible_tmp.pem"
                                 bat '@C:\\Windows\\system32\\wsl.exe chmod 600 ansible_tmp.pem'
                                 bat """C:\\Windows\\system32\\wsl.exe ansible --version"""        
-                                bat """C:\\Windows\\system32\\wsl.exe ansible-playbook \"${srvrgrp}\" -i hostsfile.ini \"${playbook}" --private-key=ansible_tmp.pem """
+                                bat """C:\\Windows\\system32\\wsl.exe ansible-playbook \"${srvrgrp}\" -i hostsfile.ini --private-key=ansible_tmp.pem \"${playbook}\""""
                                 bat "@DEL ansible_tmp.pem"
                             }
                             catch (err) {
