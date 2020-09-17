@@ -1,0 +1,7 @@
+---
+# Playbook for DB Servers (Private Network)
+- name: Put custom index.html to webservers
+  hosts: websrvr_DEV
+  tasks:
+  - copy: src="../adhoc/master.gitconfig" dest="~/.gitconfig" 
+

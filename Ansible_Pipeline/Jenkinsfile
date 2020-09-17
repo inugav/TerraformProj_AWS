@@ -38,13 +38,15 @@ pipeline {
                     dir('Ansible_Pipeline/'){
                         script {
                             def srvrgrp 
+                            def playbook
                             srvrgrp = "${params.SERVERTYPE}_${params.WORKSPACE}"
+                            playbook = "${params.SERVERTYPE}.yml"
                             echo "Running ansible playbook against ${srvrgrp}"
                             try {
                                 bat "@copy ${ANSIBLE_PRIVATE_KEY_FILE} ansible_tmp.pem"
                                 bat '@C:\\Windows\\system32\\wsl.exe chmod 600 ansible_tmp.pem'
                                 bat """C:\\Windows\\system32\\wsl.exe ansible --version"""        
-                                bat """C:\\Windows\\system32\\wsl.exe ansible \"${srvrgrp}\" -i hostsfile.ini -m ping --private-key=ansible_tmp.pem """
+                                bat """C:\\Windows\\system32\\wsl.exe ansible-playbook \"${srvrgrp}\" -i hostsfile.ini \"${playbook}" --private-key=ansible_tmp.pem """
                                 bat "@DEL ansible_tmp.pem"
                             }
                             catch (err) {
