@@ -13,7 +13,7 @@ pipeline {
         AWS_ACCESS_KEY_ID = credentials('aws_access_key')
         AWS_SECRET_ACCESS_KEY = credentials('aws_secret_access_key')
         ANSIBLE_HOST_KEY_CHECKING = false
-   
+        ANSIBLE_PRIVATE_KEY_FILE = credentials('AWS_SSH_KEY_FILE')
     }
     
     stages {
@@ -42,10 +42,7 @@ pipeline {
                             srvrgrp = "${params.SERVERTYPE}_${params.WORKSPACE}"
                             echo "Running ansible playbook against ${srvrgrp}"
                             try {
-                                 withCredentials([file(credentialsId: 'AWS_SSH_KEY_FILE', variable: 'ANSIBLE_PRIVATE_KEY_FILE')])
-                                {
-                                    bat """C:\\Windows\\system32\\wsl.exe ansible \"${srvrgrp}\" -i hostsfile.ini -m ping --private-key=\"${env.ANSIBLE_PRIVATE_KEY_FILE}\" """
-                                }
+                                 bat """C:\\Windows\\system32\\wsl.exe ansible \"${srvrgrp}\" -i hostsfile.ini -m ping --private-key=\"${env.ANSIBLE_PRIVATE_KEY_FILE}\" """
                             }
                             catch (err) {
                                 echo "Validation Errors "
