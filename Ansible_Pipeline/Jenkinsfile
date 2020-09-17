@@ -19,8 +19,7 @@ pipeline {
       
         stage('Generate Inventory File '){
             steps {
-                withCredentials([file(credentialsId: 'AWS_SSH_KEY_FILE', variable: 'ANSIBLE_PRIVATE_KEY_FILE')]) {
-                    dir('Ansible_Pipeline/') {
+                   dir('Ansible_Pipeline/') {
                         script {
                             try {
                                 bat  'C:\\Users\\vamsi\\AppData\\Local\\Programs\\Python\\Python38-32\\python.exe .\\QueryAWS_EC2.py'  
@@ -37,22 +36,22 @@ pipeline {
     
         stage('Execute Ansible Playbook'){
             steps {
-                withcre
-                dir('Ansible_Pipeline/'){
-                    script {
-                            def srvrgrp 
-                            srvrgrp = "${params.SERVERTYPE}_${params.WORKSPACE}"
-                            echo "Running ansible playbook against ${srvrgrp}"
-                            try {
-                                 bat """C:\\Windows\\system32\\wsl.exe ansible \"${srvrgrp}\" -i hostsfile.ini -m ping --private-key=\"${env.ANSIBLE_PRIVATE_KEY_FILE}\" """
+                withCredentials([file(credentialsId: 'AWS_SSH_KEY_FILE', variable: 'ANSIBLE_PRIVATE_KEY_FILE')]) {
+                    dir('Ansible_Pipeline/'){
+                        script {
+                                def srvrgrp 
+                                srvrgrp = "${params.SERVERTYPE}_${params.WORKSPACE}"
+                                echo "Running ansible playbook against ${srvrgrp}"
+                                try {
+                                    bat """C:\\Windows\\system32\\wsl.exe ansible \"${srvrgrp}\" -i hostsfile.ini -m ping --private-key=\"${env.ANSIBLE_PRIVATE_KEY_FILE}\" """
+                                }
+                                catch (err) {
+                                    echo "Validation Errors "
+                                    currentBuild.result = 'UNSTABLE'
+                                    return
                             }
-                            catch (err) {
-                                echo "Validation Errors "
-                                currentBuild.result = 'UNSTABLE'
-                                return
                         }
                     }
-                }
             }
         }
     }
