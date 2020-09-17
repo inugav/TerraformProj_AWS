@@ -26,7 +26,7 @@ pipeline {
                          
 
                         try {
-                            bat  '${PYTHON_EXE} .\\QueryAWS_EC2.py'  
+                            bat  'C:\\Users\\vamsi\\AppData\\Local\\Programs\\Python\\Python38-32\\python.exe .\\QueryAWS_EC2.py'  
                         }
                         catch (err) {
                             echo "Error Generating File"
@@ -45,7 +45,7 @@ pipeline {
                           
                             srvrgrp = "${params.SERVERTYPE}_${params.WORKSPACE}"
                             try {
-                                bat '${WSL_EXE} ansible ${srvrgrp} -i hostsfile.ini -m ping '
+                                bat 'C:\\Windows\\system32\\wsl.exe ansible ${srvrgrp} -i hostsfile.ini -m ping '
                             }
                             catch (err) {
                                 echo "Validation Errors "
