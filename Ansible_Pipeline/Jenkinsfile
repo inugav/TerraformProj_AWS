@@ -32,6 +32,34 @@ pipeline {
             }
         }
     
+        stage('Check Playbook Syntax'){
+            steps {
+                withCredentials([file(credentialsId: 'AWS_SSH_KEY_FILE', variable: 'ANSIBLE_PRIVATE_KEY_FILE')]) {
+                    dir('Ansible_Pipeline/'){
+                        script {
+                            def srvrgrp 
+                            def playbook
+                            srvrgrp = "${params.SERVERTYPE}_${params.WORKSPACE}"
+                            playbook = "${params.SERVERTYPE}.yml"
+                            echo "Running ansible playbook against ${srvrgrp}"
+                            try {
+                                bat "@copy ${ANSIBLE_PRIVATE_KEY_FILE} ansible_tmp.pem"
+                                bat '@C:\\Windows\\system32\\wsl.exe chmod 600 ansible_tmp.pem'
+                                bat """C:\\Windows\\system32\\wsl.exe ansible --version"""        
+                                bat """C:\\Windows\\system32\\wsl.exe ansible-playbook -i hostsfile.ini \"${playbook}\" --limit \"${srvrgrp}\" --private-key=ansible_tmp.pem  --syntax-check """                               
+                            }
+                            catch (err) {
+                                echo "Syntax Errors in Ansible Playbook"
+                                currentBuild.result = 'UNSTABLE'
+                            }
+                            finally{
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         stage('Execute Ansible Playbook'){
             steps {
                 withCredentials([file(credentialsId: 'AWS_SSH_KEY_FILE', variable: 'ANSIBLE_PRIVATE_KEY_FILE')]) {
@@ -46,14 +74,18 @@ pipeline {
                                 bat "@copy ${ANSIBLE_PRIVATE_KEY_FILE} ansible_tmp.pem"
                                 bat '@C:\\Windows\\system32\\wsl.exe chmod 600 ansible_tmp.pem'
                                 bat """C:\\Windows\\system32\\wsl.exe ansible --version"""        
-                                bat """C:\\Windows\\system32\\wsl.exe ansible-playbook \"${srvrgrp}\" -i hostsfile.ini --private-key=ansible_tmp.pem \"${playbook}\""""
+                                bat """C:\\Windows\\system32\\wsl.exe ansible-playbook \"${playbook}\" -i hostsfile.ini --limit \"${srvrgrp}\" --private-key=ansible_tmp.pem """
                                 bat "@DEL ansible_tmp.pem"
                             }
                             catch (err) {
-                                echo "Error executing Ansible Playbook"
+                                echo "Error executing Ansible Playbook"  
                                 currentBuild.result = 'UNSTABLE'
                                 return
                             }
+                            finally {
+                                bat "@DEL ansible_tmp.pem"
+                            }
+
                         }
                     }
                 }
