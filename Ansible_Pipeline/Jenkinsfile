@@ -12,8 +12,8 @@ pipeline {
     environment {
         AWS_ACCESS_KEY_ID = credentials('aws_access_key')
         AWS_SECRET_ACCESS_KEY = credentials('aws_secret_access_key')
-        ANSIBLE_PRIVATE_KEY_FILE = credentials('AWS_SSH_KEY_FILE')
-       
+        DEFAULT_PRIVATE_KEY_FILE = credentials('AWS_SSH_KEY_FILE')
+        ANSIBLE_HOST_KEY_CHECKING = false
    
     }
     
@@ -23,8 +23,6 @@ pipeline {
             steps {
                 dir('Ansible_Pipeline/') {
                     script {
-                         
-
                         try {
                             bat  'C:\\Users\\vamsi\\AppData\\Local\\Programs\\Python\\Python38-32\\python.exe .\\QueryAWS_EC2.py'  
                         }
@@ -45,7 +43,7 @@ pipeline {
                           
                             srvrgrp = "${params.SERVERTYPE}_${params.WORKSPACE}"
                             try {
-                                bat 'C:\\Windows\\system32\\wsl.exe ansible ${srvrgrp} -i hostsfile.ini -m ping '
+                                bat """C:\\Windows\\system32\\wsl.exe ansible \"${srvrgrp}\" -i hostsfile.ini -m ping """
                             }
                             catch (err) {
                                 echo "Validation Errors "
