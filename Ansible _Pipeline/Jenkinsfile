@@ -15,7 +15,7 @@ pipeline {
     }
     
     stages {
-        def srvrgrp = "${env.SERVERTYPE}_${env.WORKSPACE}"
+      
         stage('Generate Inventory File '){
             steps {
                 dir('Ansible_Pipeline/') {
@@ -36,13 +36,15 @@ pipeline {
             steps {
                 dir('Ansible_Pipeline/'){
                     script {
-                        try {
-                            bat '${env.WSL_EXE} ansible ${env.srvrgrp} -i hostsfile.ini -m ping '
-                        }
-                        catch (err) {
-                            echo "Validation Errors "
-                            currentBuild.result = 'UNSTABLE'
-                            return
+                          def srvrgrp 
+                            srvrgrp = "${params.SERVERTYPE}_${params.WORKSPACE}"
+                            try {
+                                bat '${env.WSL_EXE} ansible ${srvrgrp} -i hostsfile.ini -m ping '
+                            }
+                            catch (err) {
+                                echo "Validation Errors "
+                                currentBuild.result = 'UNSTABLE'
+                                return
                         }
                     }
                 }
