@@ -7,16 +7,22 @@ ec2 = boto3.resource(service_name='ec2', region_name=(strregion))
 
 allinsts = []
 srvrgrp = set()
+strjumpsrvr = ""
 for ins in ec2.instances.all():
-    if ins.state['Name'] != 'terminated':
+#    if ins.state['Name'] != 'terminated':
+    if ins.state['Name'] == 'running':
         instdet = dict()
         instdet["security_group"] = ins.security_groups[0]['GroupName'] # Assuming only one SG is added to host
         instdet["private_ip"] = ins.private_ip_address
         instdet["public_ip"] = ins.public_ip_address
-        srvrgrp.add(((ins.security_groups[0]['GroupName']).replace(proj,"")).replace("_sg",""))
+        sg=((ins.security_groups[0]['GroupName']).replace(proj,"")).replace("_sg","")
+        srvrgrp.add(sg)
         allinsts.append(instdet)
-pvtinvfile = open("hostsfilepvtips.ini","w")
-pblinvfile = open("hostsfile.ini","w")
+        if (sg.find("natsrvr") >= 0 ) and (len(strjumpsrvr) == 0):
+            strjumpsrvr = ins.public_ip_address
+
+pvtinvfile = open("./hostsfilepvtips.ini","w")
+pblinvfile = open("./hostsfile.ini","w")
 pvtinvfile.write("[all:children]\n")
 pblinvfile.write("[all:children]\n")
 
@@ -35,6 +41,16 @@ for sg in srvrgrp:
             if (inst['public_ip'] is not None):
                 pblinvfile.write(tmp + " " + "ansible_host="+inst['public_ip']+ " " + commonparms + "\n")
             i=i+1
+            
+# Update Vars for DB Server for connection Proxy
+strsshline = 'ansible_ssh_common_args=\'-o StrictHostKeyChecking=no -o ProxyCommand=\"ssh -W %h:%p -A -q ec2-user@'
+for sg in srvrgrp:
+    pvtinvfile.write("\n["+sg+":vars]\n")
+    pblinvfile.write("\n["+sg+":vars]\n" )
+    
+    if sg.find('dbsrvr') == 0 :
+        pvtinvfile.write(strsshline + strjumpsrvr +"\"'")
+
 pvtinvfile.close()
 pblinvfile.close()
 

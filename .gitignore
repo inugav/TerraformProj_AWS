@@ -11,3 +11,4 @@ AppInfraSetup/AppInfrastp_DEV.tfplan
 NetworkSetup/Networkstp_DEV.tfplan
 hostsfile.ini
 hostsfilepvtips.ini
+archive/*
