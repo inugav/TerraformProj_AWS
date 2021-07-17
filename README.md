@@ -50,7 +50,6 @@ Points to note:
 ---------------
     - Terraform:
        - Installed on same server as Jenkins
-       - Workspace configured with State File on AWS S3
        - Terraform 0.12 used
     - Jenkins : 
        - Terraform needs to be configured on Jenkins as plugin
