@@ -58,3 +58,7 @@ Points to note:
      - Ansible : 
        - The test uses WSL implementation of Ansible, hence pipeline batch file executions need to be modified accordingly.
        - The discovery code might need tweeking to suite individual needs. 
+ 
+ Credits:
+ --------
+      https://github.com/ned1313/Deep-Dive-Terraform
