@@ -1,4 +1,4 @@
-## My-IaC-Proj-Terraform
+## TerraformProj_AWS
 Purpose: 
 -------
 Terraform Project - For creating AWS environment, with parameters for
