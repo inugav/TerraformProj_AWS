@@ -1,17 +1,22 @@
 ## My-IaC-Proj-Terraform
 Purpose: 
 -------
-Terraform Project - For creating AWS environment, with parameters for DEV/UAT/PRD
+Terraform Project - For creating AWS environment, with parameters for
+  - DEV/UAT/PRD
+  - No of Instances
+  - Type of Instance
+  - Zone / Region
+  - No of zones for implementation
 
 Details: 
 --------
-  1. Network Setup : First module that needs to be run. Sets up the required AWS environment. Executed through Jenkins Pipeline
-     - VPC
-     - Internet Gateway   
-     - Public & Private subnets
-     - Routing Table & its associations
-     - DNS Zones
-  2. AppInfra Setup : Sets up the required instances and other application infrastructure. Executed through Jenkins Pipeline.  
+  - Network Setup : First module that needs to be run. Sets up the required AWS environment. Executed through Jenkins Pipeline
+    - VPC
+    - Internet Gateway
+    - Public & Private subnets
+    - Routing Table & its associations
+    - DNS Zones
+  - AppInfra Setup : Sets up the required instances and other application infrastructure. Executed through Jenkins Pipeline.  
      - Web Servers:
        - ELB
        - Auto Scale
@@ -28,9 +33,9 @@ Details:
      - NAT Instances
        - EC2 Instance & Security Groups
      - S3 Buckets
-  3. Ansible Pipeline: Basic Filecopy post discovery of environment  
-    - Collects Host details and generates Inventory file  
-    - Copys basic html files to web servers  
+   - Ansible Pipeline: Basic Filecopy post discovery of environment
+     - Collects Host details and generates Inventory file
+     - Copys basic html files to web servers  
 
 How it works: 
 -------------
