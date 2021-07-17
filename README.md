@@ -55,6 +55,7 @@ Points to note:
     - Jenkins : 
        - Terraform needs to be configured on Jenkins as plugin
        - Jenkins is on Windows server for this implementation. Calls might need to be modified accordingly.
+       - AWS SSH Keys and other secure parameters are setup as secure keys in Jenkins.  
      - Ansible : 
        - The test uses WSL implementation of Ansible, hence pipeline batch file executions need to be modified accordingly.
        - The discovery code might need tweeking to suite individual needs. 
