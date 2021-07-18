@@ -25,11 +25,13 @@ Details:
        - Scaling policy
        - Cloud Watch
        - IAM Roles & Security Groups
+       - Install Nginx
      - DB Servers:
        - EC2 Instances
        - DNS Records
        - Cloud Watch & Health Checks
        - IAM Roles & Security Groups
+       - Install MySQL
      - NAT Instances
        - EC2 Instance & Security Groups
      - S3 Buckets
